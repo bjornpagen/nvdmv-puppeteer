@@ -2,9 +2,14 @@
   "name": "nvdmv-puppeteer",
   "version": "0.1",
   "description": "browser automation to autoschedule nevada dmv visits",
-  "main": "index.js",
+  "main": "main.js",
   "repository": "https://github.com/bjornpagen/nvdmv-puppeteer",
   "author": "Bjorn Pagen <11238136+bjornpagen@users.noreply.github.com>",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "puppeteer": "^15.3.1",
+    "puppeteer-extra": "^3.3.2",
+    "puppeteer-extra-plugin-stealth": "^2.10.2"
+  }
 }
