@@ -35,11 +35,33 @@ const Timeslots = {
   ThreeFortyFivePM: '03:45 pm',
   FourPM: '04:00 pm',
   FourFifteenPM: '04:15 pm',
-  FourThirtyPM: '04:30 pm',
+  FourThirtyPM: '04:30 pm'
 }
 
-const localBranchName = `Carson City`;
-const serviceName = `Drivers License - New`;
+const Branches = {
+  CarsonCity: 'Carson City',
+  Decatur: 'Decatur',
+  Flamingo: 'Flamingo',
+  Henderson: 'Henderson',
+  Sahara: 'Sahara',
+  SouthReno: 'SouthReno'
+}
+
+const Services = {
+  ADA: 'ADA',
+  DriversLicenseRenewal: 'Drivers License  - Renewal',
+  DriversLicenseNew: 'Drivers License - New',
+  KnowledgeWrittenTesting: 'Knowledge/ Written Testing',
+  LicensePlatePickupDropoff: 'License Plate Pickup\Dropoff',
+  MultipleTransactions: 'Multiple Transactions (DL & Registration)',
+  RegistrationNew: 'Registration - New',
+  RegistrationTitle: 'Registration - Title',
+  SuspensionsLicenseRecovery: 'Suspensions (Reinstatements) - Driver License/Revenue Recovery',
+  SuspensionsRegistrationRecovery: 'Suspensions (Reinstatements) - Registration/Revenue Recovery',
+}
+
+const localBranchName = Branches.Decatur;
+const serviceName = Services.DriversLicenseNew;
 const dayToBook = `28`;
 const timesToIgnore = [Timeslots.TwelveThirtyPM];
 
@@ -62,19 +84,19 @@ puppeteer.launch({ headless: true }).then(async browser => {
   async function tryDay(day) {
     const page = await browser.newPage();
     await page.goto('https://dmvapp.nv.gov/qmaticwebbooking/#/');
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(10000);
 
     const localBranch = (await page.$x(`//div[text()="${localBranchName}"]`))[0];
     await localBranch.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(200);
 
     const serviceInput = (await page.$x(`//label[text()="${serviceName}"]/..//input[@type="radio"]`))[0];
     await serviceInput.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(200);
 
     const dateDropdown = (await page.$x(`//div[text()="Select date and time"]`))[0];
     await dateDropdown.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(200);
 
     const availableDays = (await page.$x(`//li[@webid="dateTimeSelectionStep"]//table//button[not(@disabled)]`));
     const availableDayVals = await Promise.all(availableDays.map(evalElem));
@@ -86,10 +108,9 @@ puppeteer.launch({ headless: true }).then(async browser => {
   }
 
   async function tryTime(bad_times) {
-    console.log('hello');
     const [page, availableDayToBook] = await tryDay(dayToBook);
     await availableDayToBook.click();
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(200);
 
     const timeSlots = (await page.$x(`//div[@class="timeslots"]//button`));
     const timeSlotVals = await Promise.all(timeSlots.map(evalElem));
@@ -106,7 +127,7 @@ puppeteer.launch({ headless: true }).then(async browser => {
 
   const [page, availableTime] = await tryTime(timesToIgnore);
   await availableTime.click();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(200);
 
   await page.screenshot({ path: 'testresult.png', fullPage: true });
   await browser.close();
